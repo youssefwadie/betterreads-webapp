@@ -3,32 +3,34 @@ package com.github.youssefwadie.readwithme.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
 
 @Configuration
+@EnableWebFluxSecurity
 public class SecurityConfig {
 
     @Bean
     @Autowired
-    protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(
+    protected SecurityWebFilterChain filterChain(ServerHttpSecurity http) {
+        http.authorizeExchange(
                 auth -> {
-//                    auth.requestMatchers("/webjars/**").permitAll();
+                    auth.pathMatchers("/", "error").permitAll();
+                    auth.pathMatchers("/user").authenticated();
+                    auth.pathMatchers("/webjars/**").permitAll();
 
-//                    auth.requestMatchers("/", "error").permitAll();
-
-                    auth.anyRequest().permitAll();
+                    auth.anyExchange().permitAll();
                 }
-        );
-        http.exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
+            );
 
-        http.csrf(c -> c.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
+//        http.exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusServerEntryPoint(HttpStatus.UNAUTHORIZED)));
 
-        http.logout(l -> l.logoutSuccessUrl("/").permitAll()).oauth2Login();
+        http.csrf(c -> c.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse()));
+        http.oauth2Login(Customizer.withDefaults());
+        http.logout(l -> l.logoutUrl("/"));
 
         return http.build();
     }

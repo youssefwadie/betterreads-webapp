@@ -7,10 +7,10 @@ import org.springframework.boot.autoconfigure.cassandra.CqlSessionBuilderCustomi
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
+import org.springframework.data.cassandra.repository.config.EnableReactiveCassandraRepositories;
 
 @Configuration
-@EnableCassandraRepositories
+@EnableReactiveCassandraRepositories
 @EnableConfigurationProperties(DataStaxAstraProperties.class)
 public class CassandraConfig {
     @Bean

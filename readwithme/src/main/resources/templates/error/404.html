@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.css}">
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.bundle.js}"></script>
+    <title>Not Found</title>
+</head>
+
+<body>
+<div class="container">
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="padding-bottom: 20px">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Read With Me</a>
+        </div>
+    </nav>
+    <div th:insert="~{fragments/book-search :: search-panel}"></div>
+
+    <div class="m-3">
+        <h2>Sorry, the requested page could not be found</h2>
+    </div>
+
+</div>
+
+</body>
+</html>
