@@ -18,9 +18,7 @@ public class SecurityConfig {
     protected SecurityWebFilterChain filterChain(ServerHttpSecurity http) {
         http.authorizeExchange(
                 auth -> {
-                    auth.pathMatchers("/", "error").permitAll();
                     auth.pathMatchers("/user").authenticated();
-                    auth.pathMatchers("/webjars/**").permitAll();
 
                     auth.anyExchange().permitAll();
                 }
