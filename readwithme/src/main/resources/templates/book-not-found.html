@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.css}">
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.bundle.js}"></script>
+    <title>Book Not Found</title>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="padding-bottom: 20px">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">Read With Me</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div th:insert="components/book-search :: search-panel"></div>
+    <h1 class="text-center">Book not found</h1>
+</div>
+</body>
+
+</html>

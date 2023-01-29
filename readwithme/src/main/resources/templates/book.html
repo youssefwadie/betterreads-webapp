@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <!--    <link rel="icon" type="image/svg+xml" href="favicon.svg" />-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.css}">
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.bundle.js}"></script>
+    <title>Book Details</title>
+</head>
+<body>
+
+<div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="padding-bottom: 20px">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Read With Me</a>
+        </div>
+    </nav>
+
+    <div th:insert="fragments/book-search :: search-panel"></div>
+
+    <section class="content">
+        <div class="card">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img class="img-fluid rounded-start" alt="cover image" th:src="${coverImage}"/>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 th:text="${book.name}" class="card-title display-2">Book name</h5>
+
+                        <p th:text="${book.authorNames}" class="card-text display-5">Author name</p>
+
+                        <p th:text="${book.description}" class="card-text display-6">Book description</p>
+                        <p class="card-text">
+                            Publish Date: <small th:text="${book.publishDate}" class="text-muted">2023-01-01</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+</body>
+</html>
