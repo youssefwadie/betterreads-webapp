@@ -1,0 +1,36 @@
+{
+  "created": {
+    "type": "/type/datetime",
+    "value": "2009-12-09T19:05:50.674576"
+  },
+  "subjects": [
+    "Ranch houses",
+    "Architecture",
+    "History",
+    "Architecture, united states"
+  ],
+  "latest_revision": 6,
+  "key": "/works/OL1001235W",
+  "title": "The Ranch House",
+  "authors": [
+    {
+      "type": {
+        "key": "/type/author_role"
+      },
+      "author": {
+        "key": "/authors/OL93018A"
+      }
+    }
+  ],
+  "type": {
+    "key": "/type/work"
+  },
+  "last_modified": {
+    "type": "/type/datetime",
+    "value": "2020-08-14T19:52:41.766157"
+  },
+  "covers": [
+    596774
+  ],
+  "revision": 6
+}
