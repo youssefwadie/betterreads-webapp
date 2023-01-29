@@ -3,19 +3,30 @@
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <title>Read With Me</title>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.bundle.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.css}">
     <meta name="description" content=""/>
     <meta name="viewport" content="width=device-width"/>
     <base href="/"/>
+    <title>Read With Me</title>
 </head>
 <body>
-<h1>Read With Me</h1>
-<p>
-    Welcome to Read With Me App. Login to continue
-</p>
-<div>
-    With GitHub: <a href="/oauth2/authorization/github">click here</a>
-    <div th:insert="~{fragments/book-search :: search-panel}"></div>
+<div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="padding-bottom: 20px">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Read With Me</a>
+        </div>
+    </nav>
+
+    <section>
+        <div th:insert="~{fragments/book-search :: search-panel}"></div>
+
+        <span>
+            Login With GitHub: <a href="/oauth2/authorization/github">click here</a>
+        </span>
+
+    </section>
+
 </div>
 </body>
 </html>
