@@ -1,6 +1,10 @@
 package com.github.youssefwadie.readwithme.userbooks;
 
+import com.github.youssefwadie.readwithme.book.Book;
+import com.github.youssefwadie.readwithme.book.BookRepository;
 import com.github.youssefwadie.readwithme.exceptions.ValidationException;
+import com.github.youssefwadie.readwithme.user.BooksByUser;
+import com.github.youssefwadie.readwithme.user.BooksByUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.MediaType;
@@ -23,10 +27,13 @@ import java.util.Objects;
 @Controller
 public class UserBooksController {
     private final UserBooksRepository userBooksRepository;
+    private final BookRepository bookRepository;
+    private final BooksByUserRepository booksByUserRepository;
+
     private final UserBooksValidator validator;
 
     /**
-     * Basic validation is done, but it's not reported, most likely it won't be implemented.
+     * Basic validation is done, but it's not reported, most likely won't be implemented.
      */
     @PostMapping(path = "/addUserBook", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public Mono<Rendering> addBookForUser(ServerWebExchange serverRequest) {
@@ -37,22 +44,42 @@ public class UserBooksController {
         return Mono.zip(serverRequest.getFormData(), principalMono)
                 .flatMap(tuple -> {
                     val userBooks = mapFormDataAndPrincipalToUserBooks(tuple);
+                    val bookId = userBooks.getKey().getBookId();
 
-                    val renderingMono = Mono.just(Rendering.redirectTo("/books/" + userBooks.getKey().getBookId()).build());
+                    return bookRepository
+                            .findById(bookId)
+                            .flatMap(book -> {
+                                val renderingMono = Mono.just(Rendering.redirectTo("/books/" + bookId).build());
 
-                    val errors = new BeanPropertyBindingResult(userBooks, "userBooks");
-                    validator.validate(userBooks, errors);
+                                val errors = new BeanPropertyBindingResult(userBooks, "userBooks");
+                                validator.validate(userBooks, errors);
 
-                    if (errors.hasErrors()) {
-                        return renderingMono;
-                    }
+                                if (errors.hasErrors()) {
+                                    return renderingMono;
+                                }
 
-                    return userBooksRepository
-                            .save(userBooks)
-                            .then(renderingMono);
+                                val booksByUser = mapBookAndUserBooksToBooksByUser(book, userBooks);
+                                return userBooksRepository
+                                        .save(userBooks)
+                                        .then(booksByUserRepository.save(booksByUser))
+                                        .then(renderingMono);
+
+                            })
+                            .onErrorReturn(Rendering.redirectTo("/").build());
                 });
     }
 
+    public BooksByUser mapBookAndUserBooksToBooksByUser(Book book, UserBooks userBooks) {
+        BooksByUser booksByUser = new BooksByUser();
+        booksByUser.setId(userBooks.getKey().getUserId());
+        booksByUser.setBookId(book.getId());
+        booksByUser.setBookName(book.getName());
+        booksByUser.setCoverIds(book.getCoverIds());
+        booksByUser.setAuthorNames(book.getAuthorNames());
+        booksByUser.setReadingStatus(userBooks.getReadingStatus());
+        booksByUser.setRating(userBooks.getRating());
+        return booksByUser;
+    }
 
     @ExceptionHandler(ValidationException.class)
     public Mono<Rendering> onException(ValidationException ex) {

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.bundle.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.css}">
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width"/>
+    <base href="/"/>
+    <title>Read With Me</title>
+</head>
+<body>
+<div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="padding-bottom: 20px">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Read With Me</a>
+        </div>
+    </nav>
+    <div th:insert="~{fragments/book-search :: search-panel}"></div>
+
+    <section class="content">
+        <h1>My Books</h1>
+        <div class="card mb-3" style="max-width: 540px;" th:each="book : ${books}">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img th:src="${book.coverUrl}" class="img-fluid rounded-start" alt="Book cover">
+                </div>
+
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <a th:href="@{'/books/' + ${book.bookId}}" class="card-title" th:text="${book.bookName}">Name</a>
+                        <p th:text="${book.authorNames}" class="card-text display-5">Author name</p>
+
+                        <div th:switch="${book.readingStatus}">
+                            <p th:case="'0-reading'" class="card-text display-6">Currently Reading</p>
+                            <p th:case="'1-finished'" class="card-text display-6">Finished</p>
+                            <p th:case="'2-dnf'" class="card-text display-6">Did not finish</p>
+                        </div>
+
+                        <div class="card-text">
+                            <span class="card-text display-5">
+                                <th:block th:each="rating : ${#numbers.sequence(0, book.rating - 1)}">&#9733;</th:block>
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+
+
+</div>
+</body>
+</html>

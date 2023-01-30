@@ -30,9 +30,9 @@ public class Book {
     @CassandraType(type = Name.DATE)
     private LocalDate publishDate;
 
-    @Column("covers_ids")
+    @Column("cover_ids")
     @CassandraType(type = Name.LIST, typeArguments = Name.TEXT)
-    private List<String> coversId;
+    private List<String> coverIds;
 
     @Column("author_names")
     @CassandraType(type = Name.LIST, typeArguments = Name.TEXT)

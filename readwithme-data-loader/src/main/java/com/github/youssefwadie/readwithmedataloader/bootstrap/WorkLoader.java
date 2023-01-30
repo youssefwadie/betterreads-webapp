@@ -62,7 +62,7 @@ public class WorkLoader implements CommandLineRunner {
 
                     book.setDescription(parseDescription(jsonObject));
                     book.setPublishDate(parsePublishDate(jsonObject, dateTimeFormatter));
-                    book.setCoversId(parseCoverIds(jsonObject));
+                    book.setCoverIds(parseCoverIds(jsonObject));
                     val authorIds = parseAuthorIds(jsonObject);
                     book.setAuthorIds(authorIds);
                     book.setAuthorNames(getAuthorNames(authorIds));

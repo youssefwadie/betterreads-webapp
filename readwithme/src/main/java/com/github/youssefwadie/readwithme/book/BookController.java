@@ -42,8 +42,8 @@ public class BookController {
 
         var coverImageUrl = "/images/no-image.png";
 
-        if (book.getCoversId() != null && !book.getCoversId().isEmpty()) {
-            coverImageUrl = String.format("%s/%s-L.jpg", COVER_IMAGE_ROOT, book.getCoversId().get(0));
+        if (book.getCoverIds() != null && !book.getCoverIds().isEmpty()) {
+            coverImageUrl = String.format("%s/%s-L.jpg", COVER_IMAGE_ROOT, book.getCoverIds().get(0));
         }
 
         val renderingBuilder = Rendering.view(BOOK_TEMPLATE_NAME);
