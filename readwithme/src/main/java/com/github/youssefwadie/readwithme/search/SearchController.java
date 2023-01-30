@@ -1,7 +1,6 @@
 package com.github.youssefwadie.readwithme.search;
 
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +18,7 @@ public class SearchController {
 
     @GetMapping(path = "", produces = MediaType.TEXT_HTML_VALUE)
     public Mono<Rendering> getSearchResults(@RequestParam("query") String query) {
-        val searchResultMono = searchService.search(query);
-        return searchResultMono
+        return searchService.search(query)
                 .map(this::mapSearchResultsToRendering);
     }
 

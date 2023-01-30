@@ -19,10 +19,11 @@ public class SecurityConfig {
         http.authorizeExchange(
                 auth -> {
                     auth.pathMatchers("/user").authenticated();
+                    auth.pathMatchers("/addUserBook").authenticated();
 
                     auth.anyExchange().permitAll();
                 }
-            );
+        );
 
 //        http.exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusServerEntryPoint(HttpStatus.UNAUTHORIZED)));
 

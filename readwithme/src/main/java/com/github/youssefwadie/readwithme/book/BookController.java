@@ -1,6 +1,9 @@
 package com.github.youssefwadie.readwithme.book;
 
 
+import com.github.youssefwadie.readwithme.userbooks.UserBooks;
+import com.github.youssefwadie.readwithme.userbooks.UserBooksPrimaryKey;
+import com.github.youssefwadie.readwithme.userbooks.UserBooksRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.MediaType;
@@ -12,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.reactive.result.view.Rendering;
 import reactor.core.publisher.Mono;
-import reactor.core.publisher.SynchronousSink;
 
 import java.util.Objects;
 
@@ -26,16 +28,17 @@ public class BookController {
     private static final String BOOK_NOT_FOUND_TEMPLATE_NAME = "book-not-found";
 
     private final BookRepository bookRepository;
+    private final UserBooksRepository userBooksRepository;
 
     @GetMapping(path = "/{bookId}", produces = MediaType.TEXT_HTML_VALUE)
     public Mono<Rendering> getBook(@PathVariable(name = "bookId") String bookId,
                                    @AuthenticationPrincipal Mono<OAuth2User> principalMono) {
         return bookRepository.findById(bookId)
-                .flatMap(book -> mapBookAndPrincipalToView(book, principalMono))
+                .flatMap(book -> mapBookAndPrincipalMonoToView(book, principalMono))
                 .switchIfEmpty(bookNotFound());
     }
 
-    private Mono<Rendering> mapBookAndPrincipalToView(Book book, Mono<OAuth2User> principalMono) {
+    private Mono<Rendering> mapBookAndPrincipalMonoToView(Book book, Mono<OAuth2User> principalMono) {
 
         var coverImageUrl = "/images/no-image.png";
 
@@ -48,19 +51,27 @@ public class BookController {
         renderingBuilder.modelAttribute("coverImage", coverImageUrl);
         renderingBuilder.modelAttribute("book", book);
 
-        return addPrincipal(renderingBuilder, principalMono);
+        return addPrincipal(renderingBuilder, principalMono, book.getId());
     }
 
-    private Mono<Rendering> addPrincipal(Rendering.Builder<?> renderingBuilder, Mono<OAuth2User> principalMono) {
+    private Mono<Rendering> addPrincipal(Rendering.Builder<?> renderingBuilder, Mono<OAuth2User> principalMono, String bookId) {
         if (principalMono == null) return Mono.just(renderingBuilder.build());
+        return principalMono.flatMap((principal -> {
+                    final String loginId = principal.getAttribute("login");
+                    if (Objects.nonNull(loginId)) {
+                        renderingBuilder.modelAttribute("loginId", loginId);
+                    }
 
-        return principalMono.handle((OAuth2User oAuth2User, SynchronousSink<Rendering> synchronousSink) -> {
-            val loginId = oAuth2User.getAttribute("login");
-            if (Objects.nonNull(loginId)) {
-                renderingBuilder.modelAttribute("loginId", loginId);
-            }
-            synchronousSink.next(renderingBuilder.build());
-        });
+                    val key = new UserBooksPrimaryKey();
+                    key.setBookId(bookId);
+                    key.setUserId(loginId);
+
+                    return userBooksRepository
+                            .findById(key)
+                            .defaultIfEmpty(new UserBooks())
+                            .doOnNext(userBooks -> renderingBuilder.modelAttribute("userBooks", userBooks))
+                            .thenReturn(renderingBuilder.build());
+                }));
 
     }
 

@@ -14,10 +14,6 @@ public class UserBooks {
     @PrimaryKey
     private UserBooksPrimaryKey key;
 
-    @Column("book_name")
-    @CassandraType(type = CassandraType.Name.TEXT)
-    private String name;
-
     @Column("started_date")
     @CassandraType(type = CassandraType.Name.DATE)
     private LocalDate startedDate;
