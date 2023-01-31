@@ -37,7 +37,15 @@
                             Publish Date: <small th:text="${book.publishDate}" class="text-muted">2023-01-01</small>
                         </p>
 
-                        <form th:if="${loginId != null}" th:action="@{/addUserBook}" method="post">
+                        <div class="card" th:unless="${loginId}" >
+                            <div class="card-body">
+                                <h5 class="card-title">Login to track this book</h5>
+                                <p class="card-text">Mark reading dates, completion status and star ratings</p>
+                                <a href="/oauth2/authorization/github" class="btn btn-primary">Login via GitHub</a>
+                            </div>
+                        </div>
+
+                        <form th:if="${loginId}" th:action="@{/addUserBook}" method="post">
                             <div class="mb-3">
                                 <label for="startDate" class="form-label">Start Date</label>
                                 <input id="startDate" name="startDate" type="date"

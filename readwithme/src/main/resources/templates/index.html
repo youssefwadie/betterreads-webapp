@@ -11,22 +11,26 @@
     <title>Read With Me</title>
 </head>
 <body>
-<div class="container">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="padding-bottom: 20px">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">Read With Me</a>
+
+<main class="container text-center mt-5">
+
+    <h1 class="display-5 fw-bold">Read With Me</h1>
+    <div class="col-lg-6 mx-auto">
+        <p class="lead mb-lg-5">Control your reading habit. Track the books you read and fuel your reading.</p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-lg-4">
+            <a type="button" class="btn btn-primary btn-lg px-4 gap-3"
+               href="/oauth2/authorization/github">Login via GitHub</a>
         </div>
-    </nav>
 
-    <section>
-        <div th:insert="~{fragments/book-search :: search-panel}"></div>
+        <p class="lead mb-lg-4">Or search for a book</p>
 
-        <span>
-            Login With GitHub: <a href="/oauth2/authorization/github">click here</a>
-        </span>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <div th:insert="~{fragments/book-search :: search-panel}"></div>
+        </div>
 
-    </section>
+    </div>
 
-</div>
+</main>
+
 </body>
 </html>

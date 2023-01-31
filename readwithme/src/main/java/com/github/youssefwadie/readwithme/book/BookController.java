@@ -4,6 +4,7 @@ package com.github.youssefwadie.readwithme.book;
 import com.github.youssefwadie.readwithme.userbooks.UserBooks;
 import com.github.youssefwadie.readwithme.userbooks.UserBooksPrimaryKey;
 import com.github.youssefwadie.readwithme.userbooks.UserBooksRepository;
+import com.github.youssefwadie.readwithme.util.OpenLibraryUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.MediaType;
@@ -22,7 +23,6 @@ import java.util.Objects;
 @Controller
 @RequestMapping("/books")
 public class BookController {
-    private static final String COVER_IMAGE_ROOT = "https://covers.openlibrary.org/b/id";
     private static final String BOOK_TEMPLATE_NAME = "book";
 
     private static final String BOOK_NOT_FOUND_TEMPLATE_NAME = "book-not-found";
@@ -39,15 +39,9 @@ public class BookController {
     }
 
     private Mono<Rendering> mapBookAndPrincipalMonoToView(Book book, Mono<OAuth2User> principalMono) {
-
-        var coverImageUrl = "/images/no-image.png";
-
-        if (book.getCoverIds() != null && !book.getCoverIds().isEmpty()) {
-            coverImageUrl = String.format("%s/%s-L.jpg", COVER_IMAGE_ROOT, book.getCoverIds().get(0));
-        }
-
         val renderingBuilder = Rendering.view(BOOK_TEMPLATE_NAME);
 
+        val coverImageUrl = OpenLibraryUtil.coverUrl(book.getCoverIds(), "L");
         renderingBuilder.modelAttribute("coverImage", coverImageUrl);
         renderingBuilder.modelAttribute("book", book);
 
@@ -57,21 +51,21 @@ public class BookController {
     private Mono<Rendering> addPrincipal(Rendering.Builder<?> renderingBuilder, Mono<OAuth2User> principalMono, String bookId) {
         if (principalMono == null) return Mono.just(renderingBuilder.build());
         return principalMono.flatMap((principal -> {
-                    final String loginId = principal.getAttribute("login");
-                    if (Objects.nonNull(loginId)) {
-                        renderingBuilder.modelAttribute("loginId", loginId);
-                    }
+            final String loginId = principal.getAttribute("login");
+            if (Objects.nonNull(loginId)) {
+                renderingBuilder.modelAttribute("loginId", loginId);
+            }
 
-                    val key = new UserBooksPrimaryKey();
-                    key.setBookId(bookId);
-                    key.setUserId(loginId);
+            val key = new UserBooksPrimaryKey();
+            key.setBookId(bookId);
+            key.setUserId(loginId);
 
-                    return userBooksRepository
-                            .findById(key)
-                            .defaultIfEmpty(new UserBooks())
-                            .doOnNext(userBooks -> renderingBuilder.modelAttribute("userBooks", userBooks))
-                            .thenReturn(renderingBuilder.build());
-                }));
+            return userBooksRepository
+                    .findById(key)
+                    .defaultIfEmpty(new UserBooks())
+                    .doOnNext(userBooks -> renderingBuilder.modelAttribute("userBooks", userBooks))
+                    .thenReturn(renderingBuilder.build());
+        }));
 
     }
 

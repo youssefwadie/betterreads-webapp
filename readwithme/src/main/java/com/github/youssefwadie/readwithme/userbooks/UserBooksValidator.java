@@ -1,6 +1,8 @@
 package com.github.youssefwadie.readwithme.userbooks;
 
 import com.github.youssefwadie.readwithme.exceptions.InvalidValidationApiUsageException;
+import lombok.val;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -13,12 +15,12 @@ public class UserBooksValidator implements Validator {
     private final static Class<UserBooks> SUPPORTED_CLASS = UserBooks.class;
 
     @Override
-    public boolean supports(Class<?> clazz) {
+    public boolean supports(@NonNull Class<?> clazz) {
         return SUPPORTED_CLASS.equals(clazz);
     }
 
     @Override
-    public void validate(Object target, Errors errors) {
+    public void validate(@NonNull Object target, @NonNull Errors errors) {
 
         if (!supports(target.getClass())) {
             throw new InvalidValidationApiUsageException(SUPPORTED_CLASS, target.getClass());
@@ -56,8 +58,19 @@ public class UserBooksValidator implements Validator {
             return;
         }
 
+        val today = LocalDate.now();
+
+        if (startedDate.isAfter(today)) {
+            errors.rejectValue("startedDate", "started date cannot be in the future");
+            return;
+        }
+
+        if (completedDate.isAfter(today)) {
+            errors.rejectValue("completedDate", "completed date cannot be in the future");
+            return;
+        }
+
         if (startedDate.isEqual(completedDate) || startedDate.isAfter(completedDate)) {
-            errors.rejectValue("startedDate", "started date must be before the completed date");
             errors.rejectValue("completedDate", "completed date must be after the started date");
         }
     }

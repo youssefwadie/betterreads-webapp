@@ -2,6 +2,7 @@ package com.github.youssefwadie.readwithme.home;
 
 import com.github.youssefwadie.readwithme.user.BooksByUser;
 import com.github.youssefwadie.readwithme.user.BooksByUserRepository;
+import com.github.youssefwadie.readwithme.util.OpenLibraryUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.data.cassandra.core.query.CassandraPageRequest;
@@ -17,7 +18,6 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Controller
 public class HomeController {
-    private static final String COVER_IMAGE_ROOT = "https://covers.openlibrary.org/b/id";
     private final BooksByUserRepository booksByUserRepository;
 
     @GetMapping("/")
@@ -43,11 +43,8 @@ public class HomeController {
                 .stream()
                 .distinct()
                 .peek(book -> {
-                    var coverImageUrl = "/images/no-image.png";
-                    if (book.getCoverIds() != null && !book.getCoverIds().isEmpty()) {
-                        coverImageUrl = String.format("%s/%s-M.jpg", COVER_IMAGE_ROOT, book.getCoverIds().get(0));
-                    }
-                    book.setCoverUrl(coverImageUrl);
+                    val coverUrl = OpenLibraryUtil.coverUrl(book.getCoverIds(), "M");
+                    book.setCoverUrl(coverUrl);
                 })
                 .toList();
 
